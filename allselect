@@ -1,0 +1,126 @@
+SELECT * FROM information_schema.columns WHERE column_name like '%semester_id%';
+select * from public."Person";
+select * from public."LabTeacher";
+select * from public."Sector";
+select * from public."Lab";
+select * from public."Field";
+select * from public."Covers";
+delete  from public."diploma";
+alter table public."diploma"
+drop column amka;
+select * from Q6_1;
+select * from public."DiplomaTitles";
+select * from public."Professor";
+select * from public."Student";
+SELECT xmlforest(table_name, column_name)
+FROM information_schema.columns
+WHERE table_schema = 'pg_catalog';
+SELECT *
+FROM information_schema.tables
+WHERE table_schema = 'pg_catalog';
+select * from  public."Surname";
+select sum(lecture_hours+tutorial_hours) from public."Course"
+where course_code in 
+(select course_code from  public."Register" where amka='09029102421');
+select * from public."Teaches";
+select * from public."Supports";
+select * from public."CourseRun";
+where labuses is null
+--"ΑΓΓ 102" 1 
+update public."Register" set exam_grade = 8
+where course_code ='ΑΓΓ 102' and serial_number=1 and amka='09029102421';
+INSERT INTO public."Register" set exam_grade = 8
+where course_code ='ΑΓΓ 102' and serial_number=1 and amka='09029102421';
+select * from  public."Register" where amka = '28099105058' AND COURSE_CODE = 'ΑΓΓ 101';
+insert into public."Register" values('28099105058',2,'ΑΓΓ 101',0,0,0,'requested');
+where course_code ='ΑΓΓ 102' and serial_number=1 and amka='09029102421';
+select * from public."Register" where course_code ='ΑΓΓ 102' and serial_number=1;
+select * from public."Semester" order by academic_year desc;
+select EXTRACT(month from TIMESTAMP '2022-03-01');
+
+DECLARE a public."Semester".semester_season_type
+a = 'spring'
+insert into public."Semester"(semester_id, academic_year,semester_status, start_date,end_date)
+values(25,2022,'spring','06-04-2022','09-30-2022');
+select distinct cc.amka, (
+select string_agg(names1,',') as Commission from
+(select xmlforest(pp.surname,pp.name)::text as names1 from public."committee" c
+inner join public."diploma" d on c.diploma_num = d.diploma_num
+inner join public."graduate" g on g.diploma_num = d.diploma_num
+inner join public."Professor" p on p.amka = c.amka
+inner join public."Person" pp on pp.amka = p.amka
+where c.diploma_num = d.diploma_num) Commission
+)
+from  public."diploma" dd, public."committee" cc where cc.diploma_num = dd.diploma_num ;
+select * from public."graduate";
+select * from q6_1;
+insert into public."committee" values('05096003933',1,'Y');
+insert into public."committee" values('23016307139',1,'N');
+insert into public."committee" values('05087102241',1,'N');
+insert into public."committee" values('23116308110',1,'Y');
+
+select string_agg(amka,',') from public."committee";
+select * from q6_1;
+select *, (select * from public."committee") from public."Professor"
+select string_agg(names1,',') from
+(select xmlforest(pp.surname,pp.name)::text as names1 from public."committee" c
+inner join public."diploma" d on c.diploma_num = d.diploma_num
+inner join public."graduate" g on g.diploma_num = d.diploma_num
+inner join public."Professor" p on p.amka = c.amka
+inner join public."Person" pp on pp.amka = p.amka
+where c.diploma_num = 1) a;
+select * from public."Person";
+
+where amka='05096003933';
+select * from public."Student" where amka = '27060201846';
+
+
+select * from public."labmodule";
+select * from public."workgroup";
+select * from public."diploma";
+select * from public."committee";
+select * from public."Professor";
+select * from Q3_1(2);
+select * from Q3_2('01010104188','final grade');
+select * from Q3_3();
+select * from Q3_4();
+select * from Q3_5(24);
+select * from Q3_6();
+select * from Q3_7();
+insert into public."workgroup" 
+(module_no,amka,course_code)
+values(2,'05119101290','ΑΓΓ 102');
+insert into public."diploma"
+values(3,'Βελτιστοποιήσεις συνελικτικών νευρωνικών δικτύων με τεχνικές απόσταξης γνώσης για εφαρμογές σε επιταχυντές υλικού (Hardware)',
+7,'05099603860','01-APR-2022',8,1,'ΠΛΗ 111');
+5	"05099603860"	"01-APR-2022"	4	1	"ΠΛΗ 111"	  
+select t.amka,sum(c.lab_hours) from public."LabTeacher" t 
+inner join public."Supports" s on s.amka = t.amka
+inner join public."Course" c on s.course_code = c.course_code
+group by t.amka, c.lab_hours
+order by sum(c.lab_hours);
+createlang -d dbname plpgsql;
+begin;
+select * from f2_1();
+COMMIT;
+select count(*) from public."workgroup" where course_code = 'ΠΛΗ 111';
+select count(*) from public."graduate";
+select * from public."committee";
+select * from public."diploma";
+delete from public."graduate";
+delete from public."diploma";
+SELECT s.* FROM public."Student" s where entry_date > now() - '3 years' :: interval
+	and exists (select 1 from public."Register" r where r.amka = s.amka)
+	and not exists (select 1 from public."graduate" g, public."diploma" d where d.diploma_num = g.diploma_num)
+	ORDER BY entry_date desc;
+
+
+select t.table_schema,
+       t.table_name
+from information_schema.tables t
+inner join information_schema.columns c on c.table_name = t.table_name 
+                                and c.table_schema = t.table_schema
+where c.column_name like '%com%'
+      and t.table_schema not in ('information_schema', 'pg_catalog')
+      and t.table_type = 'BASE TABLE'
+order by t.table_schema;

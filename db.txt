@@ -1,0 +1,6 @@
+password	mars
+port		5432
+Apachi port	8081
+port		5433
+user		postgres
+password	mars

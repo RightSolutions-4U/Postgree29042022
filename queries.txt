@@ -1,0 +1,142 @@
+select * from information_schema.columns where column_name like '%hours%';
+--Q3.6
+select t.amka,sum(c.lab_hours) from public."LabTeacher" t 
+inner join public."Supports" s on s.amka = t.amka
+inner join public."Course" c on s.course_code = c.course_code
+group by t.amka, c.lab_hours
+order by sum(c.lab_hours);
+;
+
+
+select * from public."Field" f inner join public."Covers" c on c.field_code = f.code
+inner join public."Lab" l on c.lab_code = l.lab_code
+inner join public."Professor" p on l.lab_code = p.labjoins
+left join public."diploma" d on d.amka = p.amka;
+
+--inner join public."CourseRun" c on c.course_code = r.course_code
+;
+
+--, r.serial_number, exam_grade, lab_grade,final_grade 
+from public."Register" r 
+inner join public."CourseRun" c on c.course_code = r.course_code
+inner join public."Semester" s on s.semester_id = c.semesterrunsin
+where s.semester_id = 24
+group by r.course_code, r.serial_number, exam_grade;
+-- and c.serial_number = r.serial_number
+;
+
+
+
+
+select lab_code, 'Y' from public."Lab"
+where 
+exists(
+select 1 from public."CourseRun" r
+inner join public."Semester" s on s.Semester_Id = r.semesterrunsin
+where s.semester_status='present')
+UNION
+select lab_code, 'N' from public."Lab"
+where 
+not exists(
+select 1 from public."CourseRun" r
+inner join public."Semester" s on s.Semester_Id = r.semesterrunsin
+where s.semester_status='present');
+-- CASE 
+--       WHEN 'written examination'  THEN 'exame_grade'
+--       WHEN 'laboratory grade'  THEN 'lab_grade'
+--       ELSE 'final_grade'
+-- END
+from public."Register" r 
+inner join public."CourseRun" cc on cc.course_code = r.course_code and cc.serial_number = r.serial_number
+inner join public."Semester" s on s.Semester_Id = cc.semesterrunsin
+where amka='01010104188' and s.semester_status='present' order by amka;
+
+inner join public."Professor" f on f.amka = p.amka
+inner join public."Lab" l on f.labjoins = l.lab_code
+inner join public."Sector" s on s.sector_code = l.sector_code
+where l.sector_code=2
+UNION
+select p.amka, p.name, 'LabTeacher' from public."Person" p
+inner join public."LabTeacher" f on f.amka = p.amka
+inner join public."Lab" l on f.labworks = l.lab_code
+inner join public."Sector" s on s.sector_code = l.sector_code
+where l.sector_code=2;
+
+
+SELECT floor(random() * (1-10+1) + 10)::int;
+ select * from public."Register" where course_code in (
+			   select c.course_code from public."CourseRun" c, public."Semester" s
+               where c.semesterrunsin = 2
+               and final_grade is null);
+SELECT * FROM information_schema.columns WHERE column_name like '%semester_id%'
+select * from public."Register" where course_code in (
+select c.course_code from public."CourseRun" c, public."Semester" s
+where c.semesterrunsin = s.semester_id and s.semester_status= 'present'
+and final_grade is null )
+	--or (lab_grade is not null and lab_grade>=5));
+select * from public."Register" where final_grade is null or  final_grade<= 5 and course_code ='ΠΛΗ 111' and serial_number=1;	
+select * from public."Semester";	
+select * from public."CourseRun";
+select * from public."Student";
+select * from public."labmodule" where course_code ='ΠΛΗ 111';
+select * from public."workgroup";
+alter table public."workgroup" 
+   alter wgid add generated always as identity;
+select * from public."labmodule" where course_code ='ΠΛΗ 111' order by reg_max_no desc limit 1;
+select * 
+select * from public."Register" where Course_code = 'ΠΛΗ 111' and serial_number=1
+	ORDER BY random() LIMIT 1;	
+begin;
+select * from public.f2_2('ΠΛΗ 111',4);
+commit;
+begin;
+select * from public.f2_3(2);
+commit;
+select * from public."workgroup";
+"ΜΑΘ 102""ΠΛΗ 111"
+insert into public."labmodule"(module_no, course_code,type,title, reg_perc, reg_max_no,serial_number)
+values(2,'ΠΛΗ 111','2','LabModule2', 80, 60, 1);
+
+SELECT * FROM public."DiplomaTitles"  ORDER BY random() LIMIT 1;
+select c.course_Code, c.serial_number, amka from public."CourseRun" c, public."Register" r
+where r.course_code = c.course_code
+and r.serial_number = c.serial_number;
+
+SELECT s.amka FROM public."Student" s where entry_date > now() - '3 years' :: interval
+and exists (select 1 from public."Register" r where r.amka = s.amka)
+and not exists (select 1 from public."diploma" d where d.amka = s.amka)
+ORDER BY entry_date desc;
+select * from public."Register";	
+select * from f2_1();
+
+create table LabModule
+(Module_No INT PRIMARY KEY NOT NULL,
+course_code character(7),
+serial_number integer,
+Type   TEXT	 NOT NULL,
+Title  TEXT NOT NULL,
+Reg_Perc	INT,
+Reg_Max_No	INT,
+CONSTRAINT fk_CourseRun FOREIGN KEY(course_code, serial_number) REFERENCES public."CourseRun"(course_code, serial_number)
+);
+drop table public."WorkGroup";
+create table WorkGroup
+(WgID INT PRIMARY KEY NOT NULL,
+Module_No INT,
+amka character varying,
+course_code character(7),
+Grade	INT,
+CONSTRAINT fk_wgstudent FOREIGN KEY(Amka) REFERENCES public."Student"(Amka),
+CONSTRAINT fk_labmodule FOREIGN KEY(Module_No,course_code) REFERENCES LabModule(Module_No,course_code)
+);
+select * from public."CourseRun";
+select * from public."labmodule";
+
+alter table public."labmodule"
+add column "Serial_number" INT;
+alter table public."labmodule"
+add constraint "fk_CourseRun" 
+FOREIGN KEY (course_code, serial_number)
+        REFERENCES public."Course" (course_code, Serial_number) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION;

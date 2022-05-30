@@ -1,0 +1,66 @@
+--Q3.1
+select p.amka, p.name, 'Professor' from public."Person" p
+inner join public."Professor" f on f.amka = p.amka
+inner join public."Lab" l on f.labjoins = l.lab_code
+inner join public."Sector" s on s.sector_code = l.sector_code
+where l.sector_code =2
+UNION
+select p.amka, p.name, 'LabTeacher' from public."Person" p
+inner join public."LabTeacher" f on f.amka = p.amka
+inner join public."Lab" l on f.labworks = l.lab_code
+inner join public."Sector" s on s.sector_code = l.sector_code
+where l.sector_code =2;
+
+--Q3.2
+select amka, r.course_code
+-- CASE 
+--       WHEN 'written examination'  THEN 'exame_grade'
+--       WHEN 'laboratory grade'  THEN 'lab_grade'
+--       ELSE 'final_grade'
+-- END
+from public."Register" r 
+inner join public."CourseRun" cc on cc.course_code = r.course_code and cc.serial_number = r.serial_number
+inner join public."Semester" s on s.Semester_Id = cc.semesterrunsin
+where amka='01010104188' and s.semester_status='present' order by amka;
+
+--Q3.3
+select course_code,course_title from public."Course" c
+where obligatory =false
+and not exist in (select 1 from public."CourseRun" r where r.course_code = c.course_code);
+
+--Q3.4
+select lab_code, 'Y' from public."Lab"
+where 
+exists(
+select 1 from public."CourseRun" r
+inner join public."Semester" s on s.Semester_Id = r.semesterrunsin
+where s.semester_status='present')
+UNION
+select lab_code, 'N' from public."Lab"
+where 
+not exists(
+select 1 from public."CourseRun" r
+inner join public."Semester" s on s.Semester_Id = r.semesterrunsin
+where s.semester_status='present');
+
+--Q3.5
+select r.course_code, r.serial_number,max(exam_grade)
+--, r.serial_number, exam_grade, lab_grade,final_grade 
+from public."Register" r 
+inner join public."CourseRun" c on c.course_code = r.course_code
+inner join public."Semester" s on s.semester_id = c.semesterrunsin
+where s.semester_id = 24
+group by r.course_code, r.serial_number, exam_grade;
+
+--Q3.6
+select * from public."Field" f inner join public."Covers" c on c.field_code = f.code
+inner join public."Lab" l on c.lab_code = l.lab_code
+inner join public."Professor" p on l.lab_code = p.labjoins
+left join public."diploma" d on d.amka = p.amka;
+
+--Q3.7
+select t.amka,sum(c.lab_hours) from public."LabTeacher" t 
+inner join public."Supports" s on s.amka = t.amka
+inner join public."Course" c on s.course_code = c.course_code
+group by t.amka, c.lab_hours
+order by sum(c.lab_hours);
